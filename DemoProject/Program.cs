@@ -1,4 +1,5 @@
 using DemoProject.Data;
+using DemoProject.Repos;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -12,6 +13,9 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<DemoProjectContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
+
+// Register Services
+builder.Services.AddScoped<ILaptopRepo, LaptopRepo>();
 
 var app = builder.Build();
 

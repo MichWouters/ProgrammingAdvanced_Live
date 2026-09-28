@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DemoProject.Data;
+using DemoProject.Models;
+using DemoProject.Repos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DemoProject.Controllers
 {
@@ -6,38 +9,97 @@ namespace DemoProject.Controllers
     [Route("[controller]")]
     public class LaptopController: ControllerBase
     {
-        // BAD PRACTICE! Controller zou nooit rechtstreek dbContext mogen aanspreken
-        private DemoProjectContext _context;
+        private ILaptopRepo _repo;
+        private ILogger<LaptopController> _logger;
 
         // Dependency Inversion (D van soliD). -> Klasse maakt zijn eigen dependencies nooit aan
-        public LaptopController(DemoProjectContext context)
+        public LaptopController(ILaptopRepo repo, ILogger<LaptopController> logger)
         {
-            _context = context;
+            _repo = repo;
+            _logger = logger;
         }
 
 
         // URl/Laptop
-        [HttpGet("{laptop}")]
-        public Laptop[] GetAllLaptops(string laptop)
+        [HttpGet()]
+        public async Task<ActionResult<Laptop[]>> GetAllLaptopsAsync()
         {
-            return _context.Laptops.ToArray();
+            List<Laptop> laptops = await _repo.GetObjectsAsync();
+
+            if (laptops == null || laptops.Count == 0)
+            {
+                return NotFound("Geen laptops gevonden");
+            }
+
+            return Ok(laptops);
         }
 
         //Url/Laptop/3
         [HttpGet("{id}")]
-        public Laptop FindLaptop(int id)
+        public async Task<ActionResult<Laptop>> FindLaptopAsync(int id)
         {
-            return _context.Laptops.Find(id);
+            Laptop laptop = await _repo.GetObjectAsync(id);
+
+            if (laptop == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(laptop);
         }
 
         [HttpPost]
-        public void CreateLaptop([FromBody]Laptop laptop)
+        public ActionResult CreateLaptop([FromBody]Laptop laptop)
         {
-            // Query genereren
-            _context.Laptops.Add(laptop);
 
-            // Voer query uit
-            _context.SaveChanges();
+            laptop.Id = 0;
+
+            _repo.AddObject(laptop);
+
+            return CreatedAtAction("","");
+        }
+
+        // url/laptop/3
+        [HttpPut("{id}")]
+        public ActionResult EditLaptop(int id, [FromBody]Laptop laptop)
+        {
+            // Bestaande laptop ophalen
+            Laptop bestaandeLaptop = _repo.GetObjectAsync(id);
+
+            if (bestaandeLaptop == null)
+            {
+                // Toon foutboodschap
+            }
+
+            // Mapping: het overzetten van data uit object A naar object B
+            bestaandeLaptop.GPU = laptop.GPU;
+            bestaandeLaptop.Processor = laptop.Processor;
+            bestaandeLaptop.RamInGB = laptop.RamInGB;
+            bestaandeLaptop.Price = laptop.Price;
+            bestaandeLaptop.Merk = laptop.Merk;
+
+            // Bestaande laptop op te slaan
+            _repo.UpdateObject(bestaandeLaptop);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult DeleteLaptop(int id)
+        {
+            Laptop laptop = new Laptop { Id = id };
+
+            try
+            {
+                _repo.DeleteObject(id);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                return BadRequest(e.Message);
+            }
+
+            return NoContent();
         }
     }
 }
