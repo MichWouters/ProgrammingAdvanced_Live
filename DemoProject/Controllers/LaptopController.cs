@@ -54,17 +54,17 @@ namespace DemoProject.Controllers
 
             laptop.Id = 0;
 
-            _repo.AddObject(laptop);
+            _repo.AddObjectAync(laptop);
 
             return CreatedAtAction("","");
         }
 
         // url/laptop/3
         [HttpPut("{id}")]
-        public ActionResult EditLaptop(int id, [FromBody]Laptop laptop)
+        public async Task<ActionResult> EditLaptopAsync(int id, [FromBody]Laptop laptop)
         {
             // Bestaande laptop ophalen
-            Laptop bestaandeLaptop = _repo.GetObjectAsync(id);
+            Laptop bestaandeLaptop = await _repo.GetObjectAsync(id);
 
             if (bestaandeLaptop == null)
             {
