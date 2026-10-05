@@ -24,7 +24,7 @@ namespace DemoProject.Controllers
         [HttpGet()]
         public async Task<ActionResult<Laptop[]>> GetAllLaptopsAsync()
         {
-            List<Laptop> laptops = await _repo.GetObjectsAsync();
+            List<Laptop> laptops = await _repo.GetAllAsync();
 
             if (laptops == null || laptops.Count == 0)
             {
@@ -38,7 +38,7 @@ namespace DemoProject.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Laptop>> FindLaptopAsync(int id)
         {
-            Laptop laptop = await _repo.GetObjectAsync(id);
+            Laptop laptop = await _repo.GetByIdAsync(id);
 
             if (laptop == null)
             {
@@ -54,7 +54,7 @@ namespace DemoProject.Controllers
 
             laptop.Id = 0;
 
-            _repo.AddObjectAync(laptop);
+            _repo.Add(laptop);
 
             return CreatedAtAction("","");
         }
@@ -64,11 +64,12 @@ namespace DemoProject.Controllers
         public async Task<ActionResult> EditLaptopAsync(int id, [FromBody]Laptop laptop)
         {
             // Bestaande laptop ophalen
-            Laptop bestaandeLaptop = await _repo.GetObjectAsync(id);
+            Laptop bestaandeLaptop = await _repo.GetByIdAsync(id);
 
             if (bestaandeLaptop == null)
             {
                 // Toon foutboodschap
+                return NotFound();
             }
 
             // Mapping: het overzetten van data uit object A naar object B
@@ -79,7 +80,7 @@ namespace DemoProject.Controllers
             bestaandeLaptop.Merk = laptop.Merk;
 
             // Bestaande laptop op te slaan
-            _repo.UpdateObject(bestaandeLaptop);
+            _repo.Update(bestaandeLaptop);
 
             return NoContent();
         }
@@ -91,7 +92,7 @@ namespace DemoProject.Controllers
 
             try
             {
-                _repo.DeleteObject(id);
+                _repo.Delete(laptop);
             }
             catch(Exception e)
             {

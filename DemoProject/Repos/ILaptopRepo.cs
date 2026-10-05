@@ -2,12 +2,8 @@
 
 namespace DemoProject.Repos
 {
-    public interface ILaptopRepo
+    public interface ILaptopRepo: IGenericRepo<Laptop>
     {
-        Task AddObjectAync(Laptop laptop);
-        void DeleteObject(int id);
-        Task<Laptop> GetObjectAsync(int id);
-        Task<List<Laptop>> GetObjectsAsync();
-        void UpdateObject(Laptop laptop);
+        
     }
 }
