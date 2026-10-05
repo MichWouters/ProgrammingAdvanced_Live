@@ -19,6 +19,18 @@ namespace DemoProject.Controllers
             _logger = logger;
         }
 
+        [HttpGet("merk")]
+        public async Task<ActionResult<List<Laptop>>> GetLaptopByBrand(string merk)
+        {
+            List<Laptop> laptops = await _repo.GetLaptopsByBrandAsync(merk);
+
+            if (laptops == null)
+            {
+                return NotFound($"Geen laptops met merk {merk} gevonden");
+            }
+
+            return Ok(laptops);
+        }
 
         // URl/Laptop
         [HttpGet()]

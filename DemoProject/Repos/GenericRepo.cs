@@ -6,7 +6,7 @@ namespace DemoProject.Repos
 {
     public class GenericRepo<T> : IGenericRepo<T> where T : class, IModel
     {
-        private DemoProjectContext _context;
+        protected DemoProjectContext _context;
 
         public GenericRepo(DemoProjectContext context)
         {

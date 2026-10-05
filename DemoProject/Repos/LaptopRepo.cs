@@ -13,5 +13,12 @@ namespace DemoProject.Repos
         {
             
         }
+
+        public async Task<List<Laptop>> GetLaptopsByBrandAsync(string merk)
+        {
+            return await _context.Laptops
+                .Where(x => x.Merk == merk)
+                .ToListAsync();
+        }
     }
 }

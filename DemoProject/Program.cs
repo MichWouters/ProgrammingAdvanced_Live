@@ -1,4 +1,5 @@
 using DemoProject.Data;
+using DemoProject.Models;
 using DemoProject.Repos;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -15,7 +16,7 @@ builder.Services.AddDbContext<DemoProjectContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
 
 // Register Services
-builder.Services.AddScoped<ILaptopRepo, LaptopRepo>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
