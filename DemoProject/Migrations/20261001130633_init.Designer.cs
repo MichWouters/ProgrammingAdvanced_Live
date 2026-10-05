@@ -4,6 +4,7 @@ using DemoProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DemoProject.Migrations
 {
     [DbContext(typeof(DemoProjectContext))]
-    partial class DemoProjectContextModelSnapshot : ModelSnapshot
+    [Migration("20261001130633_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -525,7 +528,7 @@ namespace DemoProject.Migrations
                     b.HasOne("DemoProject.Models.Klant", "Klant")
                         .WithMany("Bestellingen")
                         .HasForeignKey("KlantId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Klant");
@@ -536,13 +539,13 @@ namespace DemoProject.Migrations
                     b.HasOne("DemoProject.Models.Bestelling", "Bestelling")
                         .WithMany("Orderlijnen")
                         .HasForeignKey("BestellingId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DemoProject.Models.Product", "Product")
                         .WithMany("OrderLijnen")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Bestelling");
