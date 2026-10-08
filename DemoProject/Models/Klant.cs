@@ -8,7 +8,7 @@
 
         public string Voornaam { get; set; }
 
-        public DateOnly DatumAangemaakt { get; set; }
+        public DateOnly DatumAangemaakt { get; set; } = new DateOnly();
 
         // Navigation Property
         // Maak een lijst altijd aan.

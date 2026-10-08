@@ -7,22 +7,22 @@ namespace DemoProject.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class LaptopController: ControllerBase
+    public class LaptopController : ControllerBase
     {
-        private ILaptopRepo _repo;
+        private IUnitOfWork _uow;
         private ILogger<LaptopController> _logger;
 
         // Dependency Inversion (D van soliD). -> Klasse maakt zijn eigen dependencies nooit aan
-        public LaptopController(ILaptopRepo repo, ILogger<LaptopController> logger)
+        public LaptopController(IUnitOfWork uow, ILogger<LaptopController> logger)
         {
-            _repo = repo;
+            _uow = uow;
             _logger = logger;
         }
 
         [HttpGet("merk")]
         public async Task<ActionResult<List<Laptop>>> GetLaptopByBrand(string merk)
         {
-            List<Laptop> laptops = await _repo.GetLaptopsByBrandAsync(merk);
+            List<Laptop> laptops = await _uow.LaptopRepo.GetLaptopsByBrandAsync(merk);
 
             if (laptops == null)
             {
@@ -36,7 +36,7 @@ namespace DemoProject.Controllers
         [HttpGet()]
         public async Task<ActionResult<Laptop[]>> GetAllLaptopsAsync()
         {
-            List<Laptop> laptops = await _repo.GetAllAsync();
+            List<Laptop> laptops = await _uow.LaptopRepo.GetAllAsync();
 
             if (laptops == null || laptops.Count == 0)
             {
@@ -50,7 +50,7 @@ namespace DemoProject.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Laptop>> FindLaptopAsync(int id)
         {
-            Laptop laptop = await _repo.GetByIdAsync(id);
+            Laptop laptop = await _uow.LaptopRepo.GetByIdAsync(id);
 
             if (laptop == null)
             {
@@ -61,22 +61,23 @@ namespace DemoProject.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateLaptop([FromBody]Laptop laptop)
+        public async Task<ActionResult> CreateLaptop([FromBody] Laptop laptop)
         {
 
             laptop.Id = 0;
 
-            _repo.Add(laptop);
+            _uow.LaptopRepo.Add(laptop);
+            await _uow.SaveChangesAsync();
 
-            return CreatedAtAction("","");
+            return CreatedAtAction(nameof(CreateLaptop), new { id = laptop.Id });
         }
 
         // url/laptop/3
         [HttpPut("{id}")]
-        public async Task<ActionResult> EditLaptopAsync(int id, [FromBody]Laptop laptop)
+        public async Task<ActionResult> EditLaptopAsync(int id, [FromBody] Laptop laptop)
         {
             // Bestaande laptop ophalen
-            Laptop bestaandeLaptop = await _repo.GetByIdAsync(id);
+            Laptop bestaandeLaptop = await _uow.LaptopRepo.GetByIdAsync(id);
 
             if (bestaandeLaptop == null)
             {
@@ -92,21 +93,23 @@ namespace DemoProject.Controllers
             bestaandeLaptop.Merk = laptop.Merk;
 
             // Bestaande laptop op te slaan
-            _repo.Update(bestaandeLaptop);
+            _uow.LaptopRepo.Update(bestaandeLaptop);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public ActionResult DeleteLaptop(int id)
+        public async Task<ActionResult> DeleteLaptopAsync(int id)
         {
             Laptop laptop = new Laptop { Id = id };
 
             try
             {
-                _repo.Delete(laptop);
+                _uow.LaptopRepo.Delete(laptop);
+                await _uow.SaveChangesAsync();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.StackTrace);
                 return BadRequest(e.Message);

@@ -6,9 +6,7 @@ namespace DemoProject.Repos
 {
     public class LaptopRepo : GenericRepo<Laptop>, ILaptopRepo
     {
-        private DemoProjectContext _context;
-
-        public LaptopRepo(DemoProjectContext context)
+         public LaptopRepo(DemoProjectContext context)
             :base(context)
         {
             
