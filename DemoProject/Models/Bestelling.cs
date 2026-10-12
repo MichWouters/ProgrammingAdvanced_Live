@@ -9,8 +9,6 @@
 
         // Navigation Property
         public Klant Klant { get; set; }
-
-        // TODO: Orderlijnen toevoegen
         public List<OrderLijn> Orderlijnen{ get; set; }
     }
 }

@@ -5,7 +5,7 @@ namespace DemoProject.Data
 {
     public interface IUnitOfWork
     {
-        IGenericRepo<Bestelling> BestellingRepository { get; }
+        IBestellingRepo BestellingRepo { get; }
         IKlantRepo KlantRepo { get; }
         ILaptopRepo LaptopRepo { get; }
         IGenericRepo<OrderLijn> OrderlijnRepo { get; }
