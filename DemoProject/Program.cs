@@ -1,4 +1,6 @@
+using DemoProject;
 using DemoProject.Data;
+using DemoProject.Services;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -21,8 +23,13 @@ builder.Services.AddDbContext<DemoProjectContext>
 
 // Register Services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IBestellingService, BestellingService>();
+
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 var app = builder.Build();
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
