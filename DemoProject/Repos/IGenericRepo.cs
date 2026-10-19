@@ -15,5 +15,6 @@ namespace DemoProject.Repos
         Task<List<T>> GetAllAsync();
 
         Task<bool> ExistsAsync(int id);
+        Task<int[]> GetExistingIdsAsync();
     }
 }

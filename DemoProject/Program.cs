@@ -1,10 +1,14 @@
 using DemoProject.Data;
-using DemoProject.Models;
-using DemoProject.Repos;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using System.Reflection;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Mapster configuration
+TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 
 // Add services to the container.
 

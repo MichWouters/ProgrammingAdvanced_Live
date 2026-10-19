@@ -1,7 +1,9 @@
 ﻿using DemoProject.Data;
+using DemoProject.DTO.Klanten;
 using DemoProject.Models;
 using DemoProject.Repos;
 using Microsoft.AspNetCore.Mvc;
+using Mapster;
 
 namespace DemoProject.Controllers
 {
@@ -30,7 +32,7 @@ namespace DemoProject.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Klant>>> GetAllKlanten()
+        public async Task<ActionResult<List<KlantDTO>>> GetAllKlanten()
         {
             List<Klant> klanten = await _uow.KlantRepo.GetAllAsync();
 
@@ -39,11 +41,13 @@ namespace DemoProject.Controllers
                 return NotFound("Geen klanten gevonden");
             }
 
-            return Ok(klanten);
+            List<KlantDTO> dtos = klanten.Adapt<List<KlantDTO>>();
+
+            return Ok(dtos);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Klant>> GetKlantById(int id)
+        public async Task<ActionResult<KlantDTO>> GetKlantById(int id)
         {
             Klant klant = await _uow.KlantRepo.GetByIdAsync(id);
 
@@ -52,7 +56,10 @@ namespace DemoProject.Controllers
                 return NotFound("Geen klant gevonden");
             }
 
-            return Ok(klant);
+            // Mappen
+            KlantDTO dto = klant.Adapt<KlantDTO>();
+
+            return Ok(dto);
         }
 
         [HttpPost]

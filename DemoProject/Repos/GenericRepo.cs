@@ -40,6 +40,11 @@ namespace DemoProject.Repos
             return await _context.Set<T>().FindAsync(id);
         }
 
+        public async Task<int[]> GetExistingIdsAsync()
+        {
+            return await _context.Set<T>().Select(x => x.Id).ToArrayAsync();
+        }
+
         public void Update(T model)
         {
             _context.Set<T>().Attach(model);
